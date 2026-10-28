@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>부마 민주항쟁 OX 퀴즈</title>
+<style>
+:root{--navy:#172b4d;--blue:#3157a4;--paper:#f5f7fb;--ink:#202b3c;--muted:#69778c;--line:#e1e7f0;--green:#16845b;--red:#c53e4b}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:22px}
+.app{width:min(100%,650px)}.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;color:var(--muted);font-size:13px;font-weight:700;letter-spacing:.04em}.brand{color:var(--blue)}
+.card{background:white;border:1px solid var(--line);border-radius:24px;padding:clamp(24px,6vw,42px);box-shadow:0 16px 45px #1d31500d}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.12em;color:var(--blue);text-transform:uppercase}
+h1{font-size:clamp(29px,6vw,43px);line-height:1.18;letter-spacing:-.05em;margin:14px 0}
+p{line-height:1.7}.sub{color:var(--muted);font-size:15px}.pill{display:inline-block;background:#edf2ff;color:var(--blue);border-radius:999px;padding:7px 12px;font-size:12px;font-weight:800}
+.primary{width:100%;border:0;border-radius:14px;background:var(--navy);color:white;padding:16px;font-size:16px;font-weight:800;cursor:pointer;margin-top:22px}
+button:focus-visible{outline:3px solid #8baaff;outline-offset:3px}.progressrow{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);font-weight:700;margin-bottom:10px}.track{height:7px;background:#edf0f5;border-radius:20px;overflow:hidden;margin-bottom:26px}.fill{height:100%;background:var(--blue);width:0;transition:width .25s}
+.question{font-size:clamp(23px,5vw,31px);font-weight:850;line-height:1.45;letter-spacing:-.035em;margin:22px 0 28px;min-height:115px}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:12px}.answer{padding:20px 10px;border:2px solid var(--line);background:white;border-radius:16px;font-size:25px;font-weight:900;cursor:pointer;transition:.15s}.answer span{display:block;font-size:12px;margin-top:5px;color:var(--muted);font-weight:700}.answer:hover{border-color:#aabbe8;background:#f8faff}
+.feedback{display:none;border-radius:14px;padding:16px;margin-top:18px;line-height:1.6;font-size:14px}.feedback.show{display:block}.feedback.good{background:#eaf8f1;color:#126544}.feedback.bad{background:#fff0f1;color:#a42c39}.feedback strong{display:block;margin-bottom:4px}
+.next{display:none;width:100%;margin-top:14px;padding:15px;border:0;border-radius:13px;background:var(--blue);color:white;font-size:15px;font-weight:800;cursor:pointer}.next.show{display:block}
+.result{text-align:center}.score{font-size:58px;font-weight:900;letter-spacing:-.06em;color:var(--blue);margin:12px}.result h2{font-size:28px}.review{text-align:left;margin-top:26px;border-top:1px solid var(--line);padding-top:10px}.reviewitem{padding:12px 0;border-bottom:1px solid var(--line);font-size:14px;line-height:1.6}.reviewitem b{display:block;margin-bottom:4px}.smallbtn{border:1px solid var(--line);background:white;border-radius:12px;padding:12px 16px;font-weight:800;cursor:pointer}.footer{text-align:center;color:#8a96a8;font-size:12px;margin-top:16px}
+@media(max-width:420px){body{padding:12px}.card{border-radius:19px}.question{min-height:130px}.answer{padding:17px 8px}}
+</style>
+</head>
+<body>
+<main class="app">
+  <div class="top"><span class="brand">HISTORY / QUIZ</span><span>한국 현대사 · 1979</span></div>
+  <section class="card" id="start">
+    <span class="pill">6 QUESTIONS · O / X</span>
+    <h1>부마 민주항쟁<br>OX 퀴즈</h1>
+    <p class="sub">부산과 마산에서 일어난 민주화 항쟁을 얼마나 알고 있나요? 카드뉴스의 핵심 내용을 확인해 보세요.</p>
+    <p>✓ 총 6문제<br>✓ 문제마다 정답과 해설 제공<br>✓ 마지막에 점수와 오답 확인</p>
+    <button class="primary" onclick="begin()">퀴즈 시작하기 →</button>
+  </section>
+  <section class="card" id="quiz" hidden>
+    <div class="progressrow"><span id="count">QUESTION 01 / 06</span><span id="scoreLive">점수 0</span></div>
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <span class="pill" id="topic">사건 소개</span>
+    <div class="question" id="question"></div>
+    <div class="answers" id="answers">
+      <button class="answer" onclick="answer(true)">O<span>맞다</span></button>
+      <button class="answer" onclick="answer(false)">X<span>아니다</span></button>
+    </div>
+    <div class="feedback" id="feedback" aria-live="polite"></div>
+    <button class="next" id="next" onclick="nextQuestion()">다음 문제 →</button>
+  </section>
+  <section class="card result" id="result" hidden>
+    <span class="pill">QUIZ COMPLETE</span>
+    <h2 id="resultTitle">퀴즈 완료!</h2>
+    <div class="score" id="finalScore">6 / 6</div>
+    <p class="sub" id="resultMsg"></p>
+    <button class="primary" onclick="restart()">다시 도전하기 ↻</button>
+    <div class="review" id="review"></div>
+  </section>
+  <div class="footer">부마 민주항쟁 학습용 퀴즈 · 정답을 선택하면 해설이 표시됩니다</div>
+</main>
+<script>
+const questions = [
+ {topic:"사건 소개",q:"부마 민주항쟁은 1979년에 부산과 마산에서 일어난 민주화 운동이다.",a:true,why:"맞아요. 부마 민주항쟁은 1979년 10월 부산과 마산에서 전개된 민주화 운동입니다."},
+ {topic:"발생 배경",q:"유신체제에서는 대통령의 권력이 제한되고 정치적 자유가 크게 보장되었다.",a:false,why:"아니에요. 유신체제에서는 대통령에게 권력이 집중되고 정치적 자유가 제한되었습니다."},
+ {topic:"부산 항쟁",q:"부마 민주항쟁은 1979년 10월 16일 부산에서 시작되었다.",a:true,why:"맞아요. 10월 16일 부산에서 학생들의 시위가 시작되어 시민들의 참여로 확대되었습니다."},
+ {topic:"마산 항쟁",q:"부마 민주항쟁은 부산에서만 일어났고 마산으로는 확산되지 않았다.",a:false,why:"아니에요. 10월 18일 무렵 마산에서도 시위가 본격적으로 전개되었습니다."},
+ {topic:"결과와 영향",q:"부마 민주항쟁은 유신체제의 위기를 드러낸 중요한 사건이었다.",a:true,why:"맞아요. 항쟁은 정권에 대한 민심 이반과 유신체제의 위기를 보여 주었습니다. 다만 유신체제의 종말을 이 사건 하나만의 결과로 단정해서는 안 됩니다."},
+ {topic:"역사적 의의",q:"부마 민주항쟁은 시민들이 민주주의와 정치적 권리를 요구한 역사적 사건으로 평가된다.",a:true,why:"맞아요. 부마 민주항쟁은 한국 민주화 운동의 역사에서 중요한 의미를 지닙니다."}
+];
+let idx=0, score=0, locked=false, history=[];
+function begin(){document.getElementById('start').hidden=true;document.getElementById('result').hidden=true;document.getElementById('quiz').hidden=false;idx=0;score=0;locked=false;history=[];render();}
+function render(){locked=false;const q=questions[idx];document.getElementById('count').textContent=`QUESTION ${String(idx+1).padStart(2,'0')} / ${questions.length}`;document.getElementById('scoreLive').textContent=`점수 ${score}`;document.getElementById('fill').style.width=`${idx/questions.length*100}%`;document.getElementById('topic').textContent=q.topic;document.getElementById('question').textContent=q.q;document.getElementById('answers').style.display='grid';document.querySelectorAll('.answer').forEach(b=>b.disabled=false);const f=document.getElementById('feedback');f.className='feedback';f.innerHTML='';const n=document.getElementById('next');n.className='next';n.textContent=idx===questions.length-1?'결과 확인하기 →':'다음 문제 →';}
+function answer(choice){if(locked)return;locked=true;const q=questions[idx],correct=choice===q.a;if(correct)score++;history.push({q:q.q,choice,correct,answer:q.a,why:q.why});document.getElementById('answers').style.display='none';const f=document.getElementById('feedback');f.className='feedback show '+(correct?'good':'bad');f.innerHTML=`<strong>${correct?'정답입니다! ✓':'아쉬워요! 정답은 '+(q.a?'O':'X')+'입니다.'}</strong>${q.why}`;document.getElementById('scoreLive').textContent=`점수 ${score}`;document.getElementById('fill').style.width=`${(idx+1)/questions.length*100}%`;document.getElementById('next').className='next show';}
+function nextQuestion(){if(idx<questions.length-1){idx++;render();}else showResult();}
+function showResult(){document.getElementById('quiz').hidden=true;document.getElementById('result').hidden=false;document.getElementById('finalScore').textContent=`${score} / ${questions.length}`;document.getElementById('resultTitle').textContent=score===6?'완벽해요! 🎉':score>=4?'잘했어요!':'다시 복습해 봐요!';document.getElementById('resultMsg').textContent=score===6?'부마 민주항쟁의 핵심 내용을 잘 이해하고 있어요.':`정답 ${score}개! 해설을 확인하고 다시 도전해 보세요.`;document.getElementById('review').innerHTML='<h3>문제별 결과</h3>'+history.map((h,i)=>`<div class="reviewitem"><b>${i+1}. ${h.correct?'✓':'✗'} ${h.q}</b><span>내 답: ${h.choice?'O':'X'} · 정답: ${h.answer?'O':'X'}</span><br>${h.why}</div>`).join('');}
+function restart(){document.getElementById('result').hidden=true;document.getElementById('start').hidden=false;}
+</script>
+</body>
+</html>
